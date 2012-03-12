@@ -1,0 +1,19 @@
+#!/bin/bash
+
+USER="KUBA"
+
+TMP_FILE="/tmp/tests_results$$"
+touch $TMP_FILE
+
+bundle exec rake parallel:create
+bundle exec rake parallel:prepare
+bundle exec rake parallel:test | tee $TMP_FILE
+
+FAILURES=`cat $TMP_FILE | egrep -i "Error:|Failure:" | wc -l`
+if [ $FAILURES -eq 0 ]; then 
+	say Dear $USER. I finished testing your app and all tests are green!! good job!
+else
+	say Dear $USER. I finished testing your app, unfortunately some tests failed... 
+fi
+
+rm $TMP_FILE
